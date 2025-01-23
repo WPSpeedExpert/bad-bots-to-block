@@ -1,0 +1,23 @@
+# Created by: OctaHexa Media LLC
+# Repository: https://github.com/WPSpeedExpert/bad-bots-to-block/robots.txt
+
+User-agent: *
+Crawl-delay: 10
+
+# Block specific bots
+User-agent: AhrefsBot
+User-agent: Amazonbot
+User-agent: Barkrowler
+User-agent: DotBot
+User-agent: MJ12bot
+User-agent: SemrushBot
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: Timpibot
+User-agent: PetalBot
+User-agent: FacebookBot
+User-agent: GoogleOther
+Disallow: /
+
+# Sitemap
+Sitemap: https://example.com/sitemap_index.xml
