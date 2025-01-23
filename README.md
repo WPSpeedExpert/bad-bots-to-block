@@ -120,7 +120,7 @@ Replace `/path/to/access.log` with the actual path to your access logs.
 ---
 
 ## Additional Resources
-- [Robots.txt Example on GitHub](https://github.com/octahexamedia/robots.txt)
+- [Robots.txt Example on GitHub](https://github.com/WPSpeedExpert/bad-bots-to-block)
 - [Cloudflare WAF Documentation](https://developers.cloudflare.com/waf/)
 
 ---
