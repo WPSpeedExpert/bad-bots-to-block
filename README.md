@@ -89,6 +89,7 @@ If you are using Cloudflare, you can create a WAF rule to block these bots. Use 
 (http.user_agent contains "PetalBot") or
 (http.user_agent contains "FacebookBot") or
 (http.user_agent contains "GoogleOther")
+```
 
 You can also find a full and updated Cloudflare firewall expression in this repository:
 [Complete Cloudflare Firewall Expression (GitHub)](https://github.com/WPSpeedExpert/bad-bots-to-block/blob/main/cloudflare-firewall-expression.txt)
