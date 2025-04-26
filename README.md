@@ -71,6 +71,8 @@ if ($http_user_agent ~* (AhrefsBot|Amazonbot|Barkrowler|DotBot|MJ12bot|SemrushBo
 }
 ```
 
+Here’s the updated .md section you asked for, with the GitHub link correctly added:
+
 ### 3. Cloudflare WAF Rule
 If you are using Cloudflare, you can create a WAF rule to block these bots. Use the following expression:
 
@@ -87,9 +89,11 @@ If you are using Cloudflare, you can create a WAF rule to block these bots. Use 
 (http.user_agent contains "PetalBot") or
 (http.user_agent contains "FacebookBot") or
 (http.user_agent contains "GoogleOther")
-```
 
----
+You can also find a full and updated Cloudflare firewall expression in this repository:
+[Complete Cloudflare Firewall Expression (GitHub)](https://github.com/WPSpeedExpert/bad-bots-to-block/blob/main/cloudflare-firewall-expression.txt)
+
+⸻
 
 ## Crawl-Delay
 To reduce the frequency of bot requests without fully blocking them, add the following to your `robots.txt`:
@@ -121,6 +125,7 @@ Replace `/path/to/access.log` with the actual path to your access logs.
 
 ## Additional Resources
 - [Robots.txt Example on GitHub](https://github.com/WPSpeedExpert/bad-bots-to-block)
+- [Complete Cloudflare Firewall Expression (GitHub)](https://github.com/WPSpeedExpert/bad-bots-to-block/blob/main/cloudflare-firewall-expression.txt)
 - [Cloudflare WAF Documentation](https://developers.cloudflare.com/waf/)
 
 ---
