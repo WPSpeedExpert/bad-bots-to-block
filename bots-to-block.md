@@ -1,9 +1,10 @@
 # List of Bots to Block
 
-### AI Crawlers
+---
+
+## AI Crawlers
 These bots scrape your site for data to train AI models or improve AI systems:
 - anthropic-ai
-- Applebot-Extended
 - Bytespider
 - CCBot
 - ChatGPT-User
@@ -11,7 +12,6 @@ These bots scrape your site for data to train AI models or improve AI systems:
 - Claude-Web
 - cohere-ai
 - Diffbot
-- FacebookBot
 - FriendlyCrawler
 - Google-Extended
 - GPTBot
@@ -22,7 +22,9 @@ These bots scrape your site for data to train AI models or improve AI systems:
 - PerplexityBot
 - Timpibot
 
-### SEO Crawlers
+---
+
+## SEO Crawlers
 These bots gather SEO-related data and often sell it to competitors or clients:
 - AhrefsBot
 - Barkrowler
@@ -31,28 +33,39 @@ These bots gather SEO-related data and often sell it to competitors or clients:
 - DotBot
 - MJ12bot
 - SemrushBot
+- MegaIndex
 
-### Security Scanners
-These bots perform security scans on your server:
+---
+
+## Security Scanners
+These bots perform security scans or collect server data:
 - CensysInspect
 - Expanse
 - internet-measurement
+- ISSCyberRiskCrawler
 
-### Search Engine Crawlers
-Search engine crawlers with niche or aggressive use cases:
+---
+
+## Aggressive or Niche Search Engine Crawlers
+Search engine crawlers that are non-essential or add load:
 - PetalBot
+- YandexBot
+- SeznamBot
+- BaiduSpider
+- 360Spider
+- Sogou Spider
 
-### Other Bots and Scrapers
-General-purpose scrapers and potential bad actors:
+---
+
+## Other Bots and Scrapers
+General-purpose scrapers, bad actors, or suspicious user agents:
 - Amazonbot
 - BW/1.1
 - Dalvik/2.1.0
 - Dataprovider
 - Empty user agent
 - Go-http-client
-- GoogleOther
 - IonCrawl
-- ISSCyberRiskCrawler
 - Java
 - Mozlila (not to be confused with Mozilla)
 - news-please
@@ -63,3 +76,10 @@ General-purpose scrapers and potential bad actors:
 - VelenPublicWebCrawler
 - wp_is_mobile
 - Zoominfobot
+- BingPreview
+
+---
+
+## Notes:
+- **Applebot-Extended**, **FacebookBot**, **GoogleOther** are not included because they may provide business value.
+- Always keep an eye on Cloudflare Firewall Events to fine-tune new bots appearing.
