@@ -43,6 +43,7 @@
 (http.user_agent contains "Zoominfobot") or
 (http.user_agent contains "BW/1.1") or
 (http.user_agent contains "YandexBot") or
+(http.user_agent contains "YandexImages") or
 (http.user_agent contains "SeznamBot") or
 (http.user_agent contains "360Spider") or
 (http.user_agent contains "Sogou") or
