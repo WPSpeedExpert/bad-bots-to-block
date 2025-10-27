@@ -137,7 +137,7 @@ This repository is licensed under the MIT License. Feel free to use, modify, and
 ---
 
 ## Contact
-For questions or suggestions, please contact us at **OctaHexa Media LLC**:
+For questions or suggestions, please contact us at **OctaGorilla**:
 
-- [Visit Our Website](https://octahexa.com)
+- [Visit Our Website](https://octagorilla.com)
 
