@@ -4,35 +4,26 @@
 
 ## AI Crawlers
 These bots scrape your site for data to train AI models or improve AI systems:
-- anthropic-ai
 - Bytespider
 - CCBot
-- ChatGPT-User
-- ClaudeBot
-- Claude-Web
-- cohere-ai
 - Diffbot
 - FriendlyCrawler
 - Google-Extended
-- GPTBot
 - Image2dataset
 - ImagesiftBot
 - Meta-ExternalAgent
 - omgili
-- PerplexityBot
 - Timpibot
 
 ---
 
 ## SEO Crawlers
 These bots gather SEO-related data and often sell it to competitors or clients:
-- AhrefsBot
 - Barkrowler
 - BLEXBot
 - DataForSeoBot
 - DotBot
 - MJ12bot
-- SemrushBot
 - MegaIndex
 
 ---
@@ -82,4 +73,6 @@ General-purpose scrapers, bad actors, or suspicious user agents:
 
 ## Notes:
 - **Applebot-Extended**, **FacebookBot**, **GoogleOther** are not included because they may provide business value.
+- **GPTBot**, **ChatGPT-User**, **ClaudeBot**, **Claude-Web**, **anthropic-ai**, **PerplexityBot**, and **cohere-ai** are not included because they power AI search tools (ChatGPT, Claude, Perplexity) that are increasingly used as search alternatives. For e-commerce sites, being discoverable in AI responses can drive traffic and sales.
+- **AhrefsBot** and **SemrushBot** are not included as they provide SEO insights that may be valuable for site owners.
 - Always keep an eye on Cloudflare Firewall Events to fine-tune new bots appearing.

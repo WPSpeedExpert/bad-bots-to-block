@@ -26,14 +26,10 @@ To block problematic bots, you can use the following `robots.txt` template:
 
 ```plaintext
 # Block specific bots
-User-agent: AhrefsBot
 User-agent: Amazonbot
 User-agent: Barkrowler
 User-agent: DotBot
 User-agent: MJ12bot
-User-agent: SemrushBot
-User-agent: GPTBot
-User-agent: ClaudeBot
 User-agent: Timpibot
 User-agent: PetalBot
 User-agent: FacebookBot
@@ -57,7 +53,7 @@ Add the following to your `.htaccess` file to block these bots:
 ```apache
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteCond %{HTTP_USER_AGENT} (AhrefsBot|Amazonbot|Barkrowler|DotBot|MJ12bot|SemrushBot|GPTBot|ClaudeBot|Timpibot|PetalBot|FacebookBot|GoogleOther) [NC]
+    RewriteCond %{HTTP_USER_AGENT} (Amazonbot|Barkrowler|DotBot|MJ12bot|Timpibot|PetalBot|FacebookBot|GoogleOther) [NC]
     RewriteRule .* - [F,L]
 </IfModule>
 ```
@@ -66,7 +62,7 @@ Add the following to your `.htaccess` file to block these bots:
 For Nginx, add the following to your server block:
 
 ```nginx
-if ($http_user_agent ~* (AhrefsBot|Amazonbot|Barkrowler|DotBot|MJ12bot|SemrushBot|GPTBot|ClaudeBot|Timpibot|PetalBot|FacebookBot|GoogleOther)) {
+if ($http_user_agent ~* (Amazonbot|Barkrowler|DotBot|MJ12bot|Timpibot|PetalBot|FacebookBot|GoogleOther)) {
     return 403;
 }
 ```
@@ -77,14 +73,10 @@ Here’s the updated .md section you asked for, with the GitHub link correctly a
 If you are using Cloudflare, you can create a WAF rule to block these bots. Use the following expression:
 
 ```plaintext
-(http.user_agent contains "AhrefsBot") or
 (http.user_agent contains "Amazonbot") or
 (http.user_agent contains "Barkrowler") or
 (http.user_agent contains "DotBot") or
 (http.user_agent contains "MJ12bot") or
-(http.user_agent contains "SemrushBot") or
-(http.user_agent contains "GPTBot") or
-(http.user_agent contains "ClaudeBot") or
 (http.user_agent contains "Timpibot") or
 (http.user_agent contains "PetalBot") or
 (http.user_agent contains "FacebookBot") or
