@@ -2,21 +2,6 @@
 
 ---
 
-## AI Crawlers
-These bots scrape your site for data to train AI models or improve AI systems:
-- Bytespider
-- CCBot
-- Diffbot
-- FriendlyCrawler
-- Google-Extended
-- Image2dataset
-- ImagesiftBot
-- Meta-ExternalAgent
-- omgili
-- Timpibot
-
----
-
 ## SEO Crawlers
 These bots gather SEO-related data and often sell it to competitors or clients:
 - Barkrowler
@@ -37,9 +22,14 @@ These bots perform security scans or collect server data:
 
 ---
 
+## Aggressive AI Training Crawlers
+These bots aggressively scrape content for AI training but provide zero referral traffic:
+- Bytespider (ByteDance/TikTok - 25x more aggressive than GPTBot, ignores robots.txt)
+
+---
+
 ## Aggressive or Niche Search Engine Crawlers
 Search engine crawlers that are non-essential or add load:
-- PetalBot
 - YandexBot
 - SeznamBot
 - BaiduSpider
@@ -50,7 +40,6 @@ Search engine crawlers that are non-essential or add load:
 
 ## Other Bots and Scrapers
 General-purpose scrapers, bad actors, or suspicious user agents:
-- Amazonbot
 - BW/1.1
 - Dalvik/2.1.0
 - Dataprovider
@@ -72,7 +61,8 @@ General-purpose scrapers, bad actors, or suspicious user agents:
 ---
 
 ## Notes:
-- **Applebot-Extended**, **FacebookBot**, **GoogleOther** are not included because they may provide business value.
-- **GPTBot**, **ChatGPT-User**, **ClaudeBot**, **Claude-Web**, **anthropic-ai**, **PerplexityBot**, and **cohere-ai** are not included because they power AI search tools (ChatGPT, Claude, Perplexity) that are increasingly used as search alternatives. For e-commerce sites, being discoverable in AI responses can drive traffic and sales.
+- **Applebot-Extended** and **FacebookBot** are not included because they may provide business value.
+- **AI search bots** (GPTBot, ChatGPT-User, ClaudeBot, Claude-Web, anthropic-ai, PerplexityBot, cohere-ai, Google-Extended, GoogleOther, Google-CloudVertexBot, Amazonbot, Applebot, Meta-ExternalAgent, PetalBot, DuckAssistBot, etc.) are not blocked because AI-powered search and shopping assistants increasingly drive traffic and sales.
+- **Bytespider** (ByteDance) IS blocked because it provides zero referral traffic, is 25x more aggressive than GPTBot, and ignores robots.txt. It powers Doubao (China-only AI), not TikTok shopping.
 - **AhrefsBot** and **SemrushBot** are not included as they provide SEO insights that may be valuable for site owners.
 - Always keep an eye on Cloudflare Firewall Events to fine-tune new bots appearing.
