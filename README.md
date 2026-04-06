@@ -19,11 +19,36 @@ By blocking these bots, you can:
 
 ---
 
-## AI Search Bots: Why We Don't Block Them
+## AI Bots: Training Crawlers vs. Referral Bots
 
-As of 2025, AI-powered search tools like ChatGPT, Perplexity, and Claude are increasingly driving real traffic and sales to e-commerce websites. This repository intentionally **does not block** most AI search bots.
+As of 2026, we distinguish between two types of AI bots:
 
-### The Business Case
+### AI Training Crawlers — NOW BLOCKED
+
+These bots scrape content to train AI models. They consume massive bandwidth and server resources but **never send traffic back**. On some servers, training crawlers account for **40–50% of all traffic**, causing MySQL crashes and site outages.
+
+Blocking training crawlers does NOT affect your visibility in AI search results — that's handled by separate referral bots (see below).
+
+| Bot | Company | Why Block |
+|-----|---------|-----------|
+| GPTBot | OpenAI | Training crawler (NOT ChatGPT search) |
+| ClaudeBot, anthropic-ai | Anthropic | Model training |
+| Amazonbot | Amazon | AI training (NOT shopping referrals) |
+| Google-Extended | Google | Bard/Gemini training (NOT search indexing) |
+| Applebot-Extended | Apple | Apple Intelligence training |
+| Meta-ExternalAgent, FacebookBot | Meta | Meta AI training |
+| CCBot | Common Crawl | Open dataset for many LLMs |
+| Diffbot | Diffbot | Sells crawled data to AI companies |
+| cohere-ai | Cohere | Enterprise LLM training |
+| AI2Bot | Allen Institute | Research crawler |
+| PetalBot | Huawei | Search and AI training |
+| Image2dataset, ImagesiftBot | Various | ML dataset collection |
+| Timpibot | Timpi | Decentralized AI training |
+| Omgili | Webz.io | Content aggregation for AI |
+
+### AI Referral Bots — ALLOWED (drive traffic and sales)
+
+These bots fire when a **human user asks an AI about your content**. The AI fetches your page and shows a **clickable citation link** back to your site. Blocking them kills AI-sourced traffic and sales.
 
 | Statistic | Source |
 |-----------|--------|
@@ -34,20 +59,23 @@ As of 2025, AI-powered search tools like ChatGPT, Perplexity, and Claude are inc
 | AI referral traffic grew **1,300%** during 2024 holiday season | [Position Digital](https://www.position.digital/blog/ai-seo-statistics/) |
 | E-commerce AI penetration increased **10.5x** YoY (2024-2025) | [Similarweb](https://www.similarweb.com/blog/insights/ai-news/ai-referral-traffic-winners/) |
 
-### AI Bots We Allow
-
 | Bot | Company | Why Allow |
 |-----|---------|-----------|
-| GPTBot, ChatGPT-User | OpenAI | 82% AI market share, dominant search alternative |
+| ChatGPT-User | OpenAI | Fires when user asks ChatGPT — shows citation |
+| OAI-SearchBot | OpenAI | ChatGPT search with clickable source links |
+| Claude-Web | Anthropic | Fires when user asks Claude — shows citation |
 | PerplexityBot | Perplexity | Best conversion rates, citation-driven clicks |
-| ClaudeBot, Claude-Web | Anthropic | Growing platform, improving referrals |
-| Amazonbot | Amazon | Powers Alexa & Rufus shopping assistant |
-| GoogleOther, Google-Extended | Google | Google AI Overviews and Gemini |
-| Meta-ExternalAgent | Meta | Meta AI features |
+| YouBot | You.com | AI search with source citations |
 | DuckAssistBot | DuckDuckGo | Excellent crawl-to-refer ratio (0.3:1) |
-| Applebot-Extended | Apple | Apple Intelligence features |
-| PetalBot | Huawei | Huawei search and AI |
-| cohere-ai | Cohere | Enterprise AI applications |
+
+### The key distinction
+
+```
+Training bot:   Your site → scraped into model weights → NO traffic back, ever
+Referral bot:   User asks AI → AI fetches your page → User sees citation → Click → Sale
+```
+
+**Block training bots (they only take). Allow referral bots (they send traffic).**
 
 ### Why We Block Bytespider
 
@@ -138,13 +166,31 @@ Add the following to your `.htaccess` file to block these bots:
 ```
 
 #### Nginx Configuration:
-For Nginx, add the following to your server block:
+For Nginx, add the following **inside `location / { }`** (not at server level):
 
 ```nginx
-if ($http_user_agent ~* (Barkrowler|DotBot|MJ12bot|FacebookBot)) {
+# AI training crawlers
+if ($http_user_agent ~* (gptbot|amazonbot|anthropic-ai|claudebot|applebot-extended|google-extended|meta-externalagent|facebookbot|ccbot|diffbot|cohere-ai|ai2bot|image2dataset|imagesiftbot|timpibot|omgili|petalbot)) {
+    return 403;
+}
+
+# Bad bots and scrapers
+if ($http_user_agent ~* (barkrowler|blexbot|bytespider|censysinspect|dataforseobot|dataprovider|dotbot|mj12bot|megaindex|velenpublicwebcrawler|peer39_crawler|zoominfobot|orbbot|ioncrawl|go-http-client|python-requests|scrapy|mozlila|bw/1.1|news-please|expanse|internet-measurement|isscyberriskcrawler)) {
+    return 403;
+}
+
+# Regional search engines
+if ($http_user_agent ~* (yandexbot|yandeximages|seznambot|360spider|sogou|baiduspider|bingpreview)) {
+    return 403;
+}
+
+# Empty user agent
+if ($http_user_agent = "") {
     return 403;
 }
 ```
+
+> **Important for CloudPanel users:** The `if` blocks must go **inside `location / { }`**, not at `server { }` level. Server-level placement doesn't work with CloudPanel's proxy_pass architecture. See [CloudPanel bot blocking guide](https://github.com/WPSpeedExpert/bad-bots-to-block) for details.
 
 Here’s the updated .md section you asked for, with the GitHub link correctly added:
 
