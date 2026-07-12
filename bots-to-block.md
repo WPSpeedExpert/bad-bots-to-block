@@ -25,6 +25,8 @@ These bots perform security scans or collect server data:
 ## AI Training Crawlers
 These bots scrape website content to train AI/LLM models. They consume bandwidth and server resources but provide zero referral traffic — they never show citations or send visitors back. Blocking them does NOT affect your visibility in AI search results (that's handled by separate referral bots like ChatGPT-User which are intentionally allowed).
 
+This list includes all bots from [Cloudflare's AI bot blocking list](https://developers.cloudflare.com/bots/concepts/bot/#ai-bots), plus additional training crawlers we've identified independently.
+
 - AI2Bot (Allen Institute for AI — research crawler)
 - Amazonbot (Amazon — powers Alexa/Rufus AI training, NOT shopping referrals)
 - anthropic-ai (Anthropic — Claude model training)
@@ -35,13 +37,16 @@ These bots scrape website content to train AI/LLM models. They consume bandwidth
 - cohere-ai (Cohere — enterprise LLM training)
 - Diffbot (Diffbot — sells crawled data to LLM companies)
 - FacebookBot (Meta — web scraping for Meta AI)
+- Google-CloudVertexBot (Google — Vertex AI training crawler)
 - Google-Extended (Google — Bard/Gemini AI training, separate from Googlebot search indexing)
+- GoogleOther (Google — general-purpose non-search crawler used for AI training)
 - GPTBot (OpenAI — GPT model training, NOT ChatGPT search)
 - Image2dataset (ML research — image dataset collection)
 - ImagesiftBot (Hive AI — reverse image search training)
 - Meta-ExternalAgent (Meta — Meta AI model training)
 - Omgili/Omgilibot (Webz.io — content aggregation for AI companies)
 - PetalBot (Huawei — Huawei search and AI training)
+- TikTokSpider (ByteDance/TikTok — TikTok content crawler, same concerns as Bytespider)
 - Timpibot (Timpi — decentralized AI search training)
 
 ---
@@ -117,5 +122,6 @@ Site owners who don't use Ahrefs or Semrush can add these per-zone.
 
 | Date | Change |
 |------|--------|
+| 2026-04-12 | Added Google-CloudVertexBot, GoogleOther, TikTokSpider to align with Cloudflare's AI bot blocking list |
 | 2026-04-06 | Added 17 AI training crawlers: GPTBot, Amazonbot, ClaudeBot, anthropic-ai, Applebot-Extended, Google-Extended, Meta-ExternalAgent, FacebookBot, CCBot, Diffbot, cohere-ai, AI2Bot, Image2dataset, ImagesiftBot, Timpibot, Omgili, PetalBot. Reason: training bots consume 40-50% of server traffic on some sites, causing OOM crashes. Referral bots (ChatGPT-User, Claude-Web, PerplexityBot) remain allowed. |
 | 2025-05-19 | Initial list: 31 bad bots (SEO scrapers, scanners, generic clients, regional search engines) |

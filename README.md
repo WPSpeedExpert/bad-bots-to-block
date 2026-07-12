@@ -29,12 +29,16 @@ These bots scrape content to train AI models. They consume massive bandwidth and
 
 Blocking training crawlers does NOT affect your visibility in AI search results — that's handled by separate referral bots (see below).
 
+This list includes all bots from [Cloudflare's AI bot blocking list](https://developers.cloudflare.com/bots/concepts/bot/#ai-bots), plus additional training crawlers we've identified independently.
+
 | Bot | Company | Why Block |
 |-----|---------|-----------|
 | GPTBot | OpenAI | Training crawler (NOT ChatGPT search) |
 | ClaudeBot, anthropic-ai | Anthropic | Model training |
 | Amazonbot | Amazon | AI training (NOT shopping referrals) |
+| Google-CloudVertexBot | Google | Vertex AI training |
 | Google-Extended | Google | Bard/Gemini training (NOT search indexing) |
+| GoogleOther | Google | Non-search crawler used for AI training |
 | Applebot-Extended | Apple | Apple Intelligence training |
 | Meta-ExternalAgent, FacebookBot | Meta | Meta AI training |
 | CCBot | Common Crawl | Open dataset for many LLMs |
@@ -43,6 +47,7 @@ Blocking training crawlers does NOT affect your visibility in AI search results 
 | AI2Bot | Allen Institute | Research crawler |
 | PetalBot | Huawei | Search and AI training |
 | Image2dataset, ImagesiftBot | Various | ML dataset collection |
+| TikTokSpider | ByteDance | TikTok crawler, same concerns as Bytespider |
 | Timpibot | Timpi | Decentralized AI training |
 | Omgili | Webz.io | Content aggregation for AI |
 
@@ -170,7 +175,7 @@ For Nginx, add the following **inside `location / { }`** (not at server level):
 
 ```nginx
 # AI training crawlers
-if ($http_user_agent ~* (gptbot|amazonbot|anthropic-ai|claudebot|applebot-extended|google-extended|meta-externalagent|facebookbot|ccbot|diffbot|cohere-ai|ai2bot|image2dataset|imagesiftbot|timpibot|omgili|petalbot)) {
+if ($http_user_agent ~* (gptbot|amazonbot|anthropic-ai|claudebot|applebot-extended|google-cloudvertexbot|google-extended|googleother|meta-externalagent|facebookbot|ccbot|diffbot|cohere-ai|ai2bot|image2dataset|imagesiftbot|tiktokspider|timpibot|omgili|petalbot)) {
     return 403;
 }
 
