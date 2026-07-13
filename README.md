@@ -36,20 +36,23 @@ This list includes all bots from [Cloudflare's AI bot blocking list](https://dev
 | GPTBot | OpenAI | Training crawler (NOT ChatGPT search) |
 | ClaudeBot, anthropic-ai | Anthropic | Model training |
 | Amazonbot | Amazon | AI training (NOT shopping referrals) |
+| DeepSeekBot | DeepSeek | LLM training, zero referral traffic |
 | Google-CloudVertexBot | Google | Vertex AI training |
-| Google-Extended | Google | Bard/Gemini training (NOT search indexing) |
-| GoogleOther | Google | Non-search crawler used for AI training |
-| Applebot-Extended | Apple | Apple Intelligence training |
+| Google-Extended † | Google | Gemini training opt-out (robots.txt only) |
+| GoogleOther | Google | Generic non-search crawler, no referral traffic |
+| Applebot-Extended † | Apple | Apple Intelligence training opt-out (robots.txt only) |
 | Meta-ExternalAgent, FacebookBot | Meta | Meta AI training |
 | CCBot | Common Crawl | Open dataset for many LLMs |
 | Diffbot | Diffbot | Sells crawled data to AI companies |
 | cohere-ai | Cohere | Enterprise LLM training |
 | AI2Bot | Allen Institute | Research crawler |
-| PetalBot | Huawei | Search and AI training |
+| PetalBot, PanguBot | Huawei | Search and PanGu LLM training |
 | Image2dataset, ImagesiftBot | Various | ML dataset collection |
 | TikTokSpider | ByteDance | TikTok crawler, same concerns as Bytespider |
 | Timpibot | Timpi | Decentralized AI training |
-| Omgili | Webz.io | Content aggregation for AI |
+| Omgili | Webz.io | Crawls and resells data for LLM training |
+
+† **`Google-Extended` and `Applebot-Extended` are robots.txt-only tokens** — they are never sent as an HTTP `User-Agent`, so they are listed in `robots.txt` only and are deliberately **not** in the Cloudflare/nginx expressions (a UA rule on them could never match). Don't block bare `Applebot`/`Googlebot` instead — those are search crawlers you want.
 
 ### AI Referral Bots — ALLOWED (drive traffic and sales)
 
@@ -68,10 +71,14 @@ These bots fire when a **human user asks an AI about your content**. The AI fetc
 |-----|---------|-----------|
 | ChatGPT-User | OpenAI | Fires when user asks ChatGPT — shows citation |
 | OAI-SearchBot | OpenAI | ChatGPT search with clickable source links |
-| Claude-Web | Anthropic | Fires when user asks Claude — shows citation |
-| PerplexityBot | Perplexity | Best conversion rates, citation-driven clicks |
+| Claude-User | Anthropic | Fires when user asks Claude — shows citation (replaces deprecated `Claude-Web`) |
+| Claude-SearchBot | Anthropic | Claude search indexing, low volume |
+| PerplexityBot ⚠️ | Perplexity | Citation-driven clicks — but see caveat below |
+| meta-externalfetcher | Meta | Meta assistant user-fetch (referral, not training) |
 | YouBot | You.com | AI search with source citations |
 | DuckAssistBot | DuckDuckGo | Excellent crawl-to-refer ratio (0.3:1) |
+
+> ⚠️ **PerplexityBot caveat (Aug 2025).** Cloudflare [de-listed Perplexity as a verified bot](https://blog.cloudflare.com/perplexity-is-using-stealth-undeclared-crawlers-to-evade-website-no-crawl-directives/) after finding it switched to an **undeclared stealth crawler** — spoofing a normal Chrome/macOS browser UA from rotating, unlisted IPs — when sites disallowed `PerplexityBot`. We still allow it: its human-initiated fetches genuinely cite and drive clicks, and **blocking the UA wouldn't stop the stealth crawler anyway** (that needs Cloudflare's managed bot-score protection, not a User-Agent rule). Site owners who don't value Perplexity referrals can add `perplexitybot` per-zone.
 
 ### The key distinction
 
@@ -175,7 +182,7 @@ For Nginx, add the following **inside `location / { }`** (not at server level):
 
 ```nginx
 # AI training crawlers
-if ($http_user_agent ~* (gptbot|amazonbot|anthropic-ai|claudebot|applebot-extended|google-cloudvertexbot|google-extended|googleother|meta-externalagent|facebookbot|ccbot|diffbot|cohere-ai|ai2bot|image2dataset|imagesiftbot|tiktokspider|timpibot|omgili|petalbot)) {
+if ($http_user_agent ~* (gptbot|amazonbot|anthropic-ai|claudebot|deepseekbot|google-cloudvertexbot|googleother|meta-externalagent|facebookbot|ccbot|diffbot|cohere-ai|ai2bot|image2dataset|imagesiftbot|tiktokspider|timpibot|omgili|pangubot|petalbot)) {
     return 403;
 }
 
