@@ -8,6 +8,7 @@ This repository contains curated lists of bots to block for website protection. 
 - `cloudflare-firewall-expression.txt` - Cloudflare WAF expression (lowercase, case-insensitive)
 - `bots-to-block.md` - Categorized list of bots with descriptions
 - `README.md` - Usage instructions with examples for robots.txt, Apache, Nginx, and Cloudflare
+- `CHANGELOG.md` - Every addition/removal with its reason (public repo: no client names or hostnames)
 
 ## Conventions
 
@@ -15,6 +16,8 @@ This repository contains curated lists of bots to block for website protection. 
 - Keep bot lists alphabetically sorted within their sections
 - When adding/removing bots, update ALL relevant files (robots.txt, cloudflare expression, bots-to-block.md, README examples)
 - Document exclusions in the Notes section of `bots-to-block.md`
+- Record every addition/removal and why in `CHANGELOG.md`
+- **Block on harm, not presence.** Add a bot only when it hammers servers and consumes real resources, or is an AI training crawler. A bot that shows up a handful of times is not added. Never block bots that can bring visitors, leads or sales
 
 ## GIT COMMIT RULES (CRITICAL)
 
@@ -33,7 +36,7 @@ These bots crawl sites to train AI models. They consume bandwidth and server res
 
 ### BLOCKED — Bad bots, scrapers, scanners
 
-SEO scrapers, data harvesters, internet scanners, generic HTTP clients, spoofed UAs, regional search engines with no audience value. See `bots-to-block.md` for the full list with descriptions.
+SEO scrapers, data harvesters, internet scanners, generic HTTP clients, spoofed UAs, low-value regional search engines (360Spider, Sogou). See `bots-to-block.md` for the full list with descriptions.
 
 ### EXCLUDED — AI referral bots (drive traffic and sales)
 
@@ -41,7 +44,8 @@ These bots fire when a human asks an AI about a page. The AI fetches the URL and
 
 - `ChatGPT-User` — OpenAI, fires when ChatGPT user asks about a page
 - `OAI-SearchBot` — OpenAI ChatGPT search, shows source links
-- `Claude-Web` — Anthropic, fires when Claude user asks about a URL
+- `Claude-User` — Anthropic, fires when Claude user asks about a URL (replaces deprecated `Claude-Web`)
+- `Meta-WebIndexer` — Meta AI search index, cites and links to sources (inside WhatsApp, Instagram, Facebook)
 - `PerplexityBot` — Perplexity.ai, displays sources prominently with click-through
 - `YouBot` — You.com, shows AI source citations
 
@@ -62,3 +66,15 @@ These are intentionally excluded from the base list. Clients who don't use these
 - `LinkedInBot` — LinkedIn link previews
 - `Slackbot` — Slack link previews
 - `Applebot` (without `-Extended` suffix) — regular Apple search, not AI training
+- `WhatsApp` — WhatsApp link previews (sends `WhatsApp/2.x`)
+- `YandexBot`, `SeznamBot`, `Baiduspider` — legitimate regional search engines; opt-in per zone only
+- `BingPreview` — Microsoft crawler, no evidence of harm
+- `SkypeUriPreview`, `MicrosoftPreview`, `TelegramBot`, `Discordbot` — link previews
+
+### EXCLUDED — Commerce and payment integrations
+
+- `facebookcatalog` (shop feed), `meta-externalads` (ads), `MerchantSecurityScanner` (Stripe). Never add broad substrings like `facebook` or `meta-`; match exact bot tokens
+
+### EXCLUDED — Empty User-Agent
+
+Do not block requests with an empty User-Agent. Webhooks, payment callbacks, uptime monitors and other integrations can send none. Removed 2026-09-19; see `CHANGELOG.md`.

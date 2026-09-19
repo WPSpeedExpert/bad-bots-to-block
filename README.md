@@ -17,6 +17,22 @@ By blocking these bots, you can:
 - Improve website performance for legitimate users.
 - Safeguard your content and data.
 
+## What We Block, and What We Don't
+
+**We block bots that harm the site or server, not bots that merely show up.** A bot earns a place on this list when it hammers servers and consumes real resources (sustained high request volume, cache-busting requests, crashes), or when it is an AI training crawler that takes content and never sends anyone back. A bot that appears in the logs a handful of times is not a reason to block it — every entry adds false-positive risk, and the list is valuable because it is short.
+
+**We never block bots that can bring clients visitors, leads or sales**, even when they are busy:
+
+- **AI search and referral bots** (ChatGPT-User, OAI-SearchBot, Claude-User, Meta-WebIndexer, …) — they cite and link back to the site.
+- **Search engines**, including regional ones such as YandexBot, SeznamBot and Baiduspider — they send search traffic in their markets. A site with no audience there can add them per zone.
+- **Link-preview fetchers** (WhatsApp, facebookexternalhit, Twitterbot, LinkedInBot, Slackbot, …) — blocking them breaks shared links and OG images.
+
+**Meta-WebIndexer is allowed on purpose.** It indexes pages for Meta AI search, which answers questions inside WhatsApp, Instagram, Facebook and Messenger and cites the pages it uses. That can bring clients leads, so it stays off the block list.
+
+**We don't block the empty User-Agent.** Webhooks, payment callbacks, uptime monitors and other integrations can send requests without one, so the rule risks blocking legitimate traffic. The volume it caught was well below the level at which we block, and a scraper can avoid it by setting any User-Agent.
+
+See [`CHANGELOG.md`](CHANGELOG.md) for every addition and removal and the reason for it.
+
 ---
 
 ## AI Bots: Training Crawlers vs. Referral Bots
@@ -34,7 +50,7 @@ This list includes all bots from [Cloudflare's AI bot blocking list](https://dev
 | Bot | Company | Why Block |
 |-----|---------|-----------|
 | GPTBot | OpenAI | Training crawler (NOT ChatGPT search) |
-| ClaudeBot, anthropic-ai | Anthropic | Model training |
+| ClaudeBot | Anthropic | Model training (legacy `anthropic-ai` token kept in robots.txt only) |
 | Amazonbot | Amazon | AI training (NOT shopping referrals) |
 | DeepSeekBot | DeepSeek | LLM training, zero referral traffic |
 | Google-CloudVertexBot | Google | Vertex AI training |
@@ -47,6 +63,7 @@ This list includes all bots from [Cloudflare's AI bot blocking list](https://dev
 | cohere-ai | Cohere | Enterprise LLM training |
 | AI2Bot | Allen Institute | Research crawler |
 | PetalBot, PanguBot | Huawei | Search and PanGu LLM training |
+| Reflectionbot | Reflection AI | Open-model training crawler, high-volume sweeps |
 | Image2dataset, ImagesiftBot | Various | ML dataset collection |
 | TikTokSpider | ByteDance | TikTok crawler, same concerns as Bytespider |
 | Timpibot | Timpi | Decentralized AI training |
@@ -75,6 +92,7 @@ These bots fire when a **human user asks an AI about your content**. The AI fetc
 | Claude-SearchBot | Anthropic | Claude search indexing, low volume |
 | PerplexityBot ⚠️ | Perplexity | Citation-driven clicks — but see caveat below |
 | meta-externalfetcher | Meta | Meta assistant user-fetch (referral, not training) |
+| Meta-WebIndexer | Meta | Meta AI search index — cites and links to source pages (see below) |
 | YouBot | You.com | AI search with source citations |
 | DuckAssistBot | DuckDuckGo | Excellent crawl-to-refer ratio (0.3:1) |
 
@@ -91,7 +109,7 @@ Referral bot:   User asks AI → AI fetches your page → User sees citation →
 
 ### Why We Block Bytespider
 
-While we allow most AI bots, **Bytespider** (ByteDance/TikTok) is explicitly blocked. Unlike GPTBot, ClaudeBot, or PerplexityBot which power consumer-facing AI search tools that drive traffic back to websites, Bytespider offers no business value to Western e-commerce sites.
+**Bytespider** (ByteDance/TikTok) gets its own section because it is one of the most aggressive crawlers on the list. Like GPTBot and ClaudeBot it gathers AI training data, and like them it sends no visitors back — but it crawls far harder, and it ignores robots.txt, so only a WAF or server rule stops it.
 
 #### What is Bytespider?
 
@@ -136,9 +154,11 @@ Bytespider commonly crawls from these IP ranges (useful for firewall rules):
 - `111.225.x.x`
 - `60.8.x.x`
 
-### Competitive Risk of Blocking AI Bots
+### Does Blocking AI Bots Cost Visibility?
 
-If you block AI crawlers but competitors don't, AI systems will only be trained on competitor information. When users ask AI assistants about products in your category, your business won't be mentioned. For e-commerce, visibility in AI responses can directly translate to sales.
+**Not the visibility that brings visitors.** When someone asks ChatGPT, Claude, Perplexity or Meta AI about products in your category, the answer and its source links come from the AI **search and referral** bots — and those are never on this list. Your pages stay fetchable, citable and clickable.
+
+What blocking training crawlers does change is whether your content goes into future model training. That content sends no visitors back, while the crawling costs real server resources. **That is the trade-off this list makes: keep the channel that sends customers open, close the one that only takes.**
 
 ---
 
@@ -182,42 +202,25 @@ For Nginx, add the following **inside `location / { }`** (not at server level):
 
 ```nginx
 # AI training crawlers
-if ($http_user_agent ~* (gptbot|amazonbot|anthropic-ai|claudebot|deepseekbot|google-cloudvertexbot|googleother|meta-externalagent|facebookbot|ccbot|diffbot|cohere-ai|ai2bot|image2dataset|imagesiftbot|tiktokspider|timpibot|omgili|pangubot|petalbot)) {
+if ($http_user_agent ~* (gptbot|amazonbot|claudebot|deepseekbot|google-cloudvertexbot|googleother|meta-externalagent|facebookbot|ccbot|diffbot|cohere-ai|ai2bot|image2dataset|imagesiftbot|tiktokspider|timpibot|omgili|pangubot|petalbot|reflectionbot)) {
     return 403;
 }
 
 # Bad bots and scrapers
-if ($http_user_agent ~* (barkrowler|blexbot|bytespider|censysinspect|dataforseobot|dataprovider|dotbot|mj12bot|megaindex|velenpublicwebcrawler|peer39_crawler|zoominfobot|orbbot|ioncrawl|go-http-client|python-requests|scrapy|mozlila|bw/1.1|news-please|expanse|internet-measurement|isscyberriskcrawler)) {
+if ($http_user_agent ~* (barkrowler|blexbot|bytespider|censysinspect|dataforseobot|dataprovider|dotbot|mj12bot|megaindex|velenpublicwebcrawler|peer39_crawler|zoominfobot|orbbot|ioncrawl|go-http-client|python-requests|scrapy|mozlila|bw/1.1|news-please|internet-measurement|isscyberriskcrawler)) {
     return 403;
 }
 
-# Regional search engines
-if ($http_user_agent ~* (yandexbot|yandeximages|seznambot|360spider|sogou|baiduspider|bingpreview)) {
-    return 403;
-}
-
-# Empty user agent
-if ($http_user_agent = "") {
+# Low-value regional search engines
+if ($http_user_agent ~* (360spider|sogou)) {
     return 403;
 }
 ```
 
 > **Important for CloudPanel users:** The `if` blocks must go **inside `location / { }`**, not at `server { }` level. Server-level placement doesn't work with CloudPanel's proxy_pass architecture. See [CloudPanel bot blocking guide](https://github.com/WPSpeedExpert/bad-bots-to-block) for details.
 
-Here’s the updated .md section you asked for, with the GitHub link correctly added:
-
 ### 3. Cloudflare WAF Rule
-If you are using Cloudflare, you can create a WAF rule to block these bots. Use the following expression:
-
-```plaintext
-(http.user_agent contains "Barkrowler") or
-(http.user_agent contains "DotBot") or
-(http.user_agent contains "MJ12bot") or
-(http.user_agent contains "FacebookBot")
-```
-
-You can also find a full and updated Cloudflare firewall expression in this repository:
-[Complete Cloudflare Firewall Expression (GitHub)](https://github.com/WPSpeedExpert/bad-bots-to-block/blob/main/cloudflare-firewall-expression.txt)
+If you are using Cloudflare, create a WAF custom rule with the action **Block** and paste the full expression from [`cloudflare-firewall-expression.txt`](https://github.com/WPSpeedExpert/bad-bots-to-block/blob/main/cloudflare-firewall-expression.txt). That file is the single source of truth; entries are lowercase because Cloudflare's `contains` match is case-insensitive.
 
 ⸻
 

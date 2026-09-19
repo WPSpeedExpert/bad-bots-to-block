@@ -8,15 +8,14 @@ These bots gather SEO-related data and often sell it to competitors or clients:
 - BLEXBot
 - DataForSeoBot
 - DotBot
-- MJ12bot
 - MegaIndex
+- MJ12bot
 
 ---
 
 ## Security Scanners
 These bots perform security scans or collect server data:
 - CensysInspect
-- Expanse
 - internet-measurement
 - ISSCyberRiskCrawler
 
@@ -29,7 +28,7 @@ This list includes all bots from [Cloudflare's AI bot blocking list](https://dev
 
 - AI2Bot (Allen Institute for AI — research crawler)
 - Amazonbot (Amazon — powers Alexa/Rufus AI training, NOT shopping referrals)
-- anthropic-ai (Anthropic — legacy Claude training UA, superseded by ClaudeBot; kept as a cheap legacy catch)
+- anthropic-ai ‡ (Anthropic — legacy Claude training UA, superseded by ClaudeBot)
 - Applebot-Extended † (Apple — Apple Intelligence training opt-out)
 - Bytespider (ByteDance/TikTok — 25x more aggressive than GPTBot, ignores robots.txt)
 - CCBot (Common Crawl — open dataset used by many LLMs including GPT, LLaMA, etc.)
@@ -47,33 +46,32 @@ This list includes all bots from [Cloudflare's AI bot blocking list](https://dev
 - Meta-ExternalAgent (Meta — Meta AI model training)
 - Omgili/Omgilibot (Webz.io — crawls and resells data, including for LLM training)
 - PanguBot (Huawei — trains Huawei's PanGu LLM, no referral; counterpart to PetalBot)
-- PetalBot (Huawei — Huawei search and AI training)
+- PetalBot (Huawei — Petal Search and AI training. Kept blocked for its crawl volume; it sends Western sites almost no traffic)
+- Reflectionbot (Reflection AI — training crawler for its open models; high-volume sweeps, no referral traffic)
 - TikTokSpider (ByteDance/TikTok — TikTok content crawler, same concerns as Bytespider)
 - Timpibot (Timpi — decentralized AI search training)
 
 † **`Google-Extended` and `Applebot-Extended` are robots.txt-only opt-out tokens.** Neither is ever sent as an HTTP `User-Agent` string — Google crawls under normal Googlebot/Vertex UAs and the token governs *training use* via robots.txt only. A `User-Agent` match on these in a WAF or nginx rule can never fire, so they are listed in `robots.txt` **only** and deliberately excluded from `cloudflare-firewall-expression.txt`. Do not "fix" this by blocking bare `applebot`/`googlebot` — those are search crawlers you want.
 
+‡ **`anthropic-ai` is in `robots.txt` only.** It is a deprecated UA that no longer appears in traffic, so it was removed from the WAF and nginx expressions (2026-09-19). The live training crawler is `ClaudeBot`.
+
 ---
 
-## Aggressive or Niche Search Engine Crawlers
-Search engine crawlers that are non-essential or add load:
-- YandexBot
-- SeznamBot
-- BaiduSpider
+## Low-Value Regional Search Engine Crawlers
+Search engine crawlers with little audience value for most sites and a poor crawl reputation:
 - 360Spider
 - Sogou Spider
+
+YandexBot, SeznamBot and Baiduspider are **not** in this section: they are legitimate search engines and are allowed by default (see Notes).
 
 ---
 
 ## Other Bots and Scrapers
 General-purpose scrapers, bad actors, or suspicious user agents:
 - BW/1.1
-- Dalvik/2.1.0
 - Dataprovider
-- Empty user agent
 - Go-http-client
 - IonCrawl
-- Java
 - Mozlila (not to be confused with Mozilla)
 - news-please
 - Orbbot
@@ -81,13 +79,19 @@ General-purpose scrapers, bad actors, or suspicious user agents:
 - python-requests
 - Scrapy
 - VelenPublicWebCrawler
-- wp_is_mobile
 - Zoominfobot
-- BingPreview
 
 ---
 
 ## Notes
+
+### Our blocking policy: harm, not presence
+
+**We block bots that harm the site or server.** An entry belongs here when the bot hammers servers and consumes real resources — sustained high request volume, cache-busting requests, crashes — or when it is an AI training crawler that only takes content. **A bot that shows up in the logs ten times is not blocked.** Every entry adds false-positive risk; the list is valuable because it is short and current.
+
+**We never block bots that can bring visitors, leads or sales**, even busy ones: AI search and referral bots, search engines, link-preview fetchers, and commerce and payment integrations.
+
+Every addition and removal, with its reason, is recorded in [`CHANGELOG.md`](CHANGELOG.md).
 
 ### Why we now block AI training bots
 
@@ -104,6 +108,7 @@ Blocking training crawlers does NOT reduce your visibility in AI search results.
 - `Claude-SearchBot` — Anthropic search indexing, low volume
 - `PerplexityBot` — Perplexity.ai displays sources prominently with click-through ⚠️ see caveat below
 - `meta-externalfetcher` — Meta assistant user-fetch (the referral counterpart to Meta-ExternalAgent)
+- `meta-webindexer` — indexes pages for Meta AI search (inside WhatsApp, Instagram, Facebook, Messenger), which cites and links to sources. Allowed because it can bring clients leads
 - `YouBot` — You.com AI shows source citations
 - `DuckAssistBot` — DuckDuckGo AI with excellent crawl-to-refer ratio
 
@@ -120,6 +125,23 @@ Site owners who don't use Ahrefs or Semrush can add these per-zone.
 - `Applebot` (without `-Extended`) — regular Apple search
 - `facebookexternalhit` — Facebook link previews (blocks sharing if blocked)
 - `Twitterbot`, `LinkedInBot`, `Slackbot` — social link previews
+- `WhatsApp` — WhatsApp link previews (sends `WhatsApp/2.x`)
+- `YandexBot`, `SeznamBot`, `Baiduspider` — main search engines in Russia, the Czech Republic and China. They honour robots.txt. Sites with no audience in those markets can add them per zone
+- `BingPreview` — Microsoft crawler; Microsoft doesn't document its current use, and there is no evidence of harm
+
+- `SkypeUriPreview`, `MicrosoftPreview` — Microsoft Teams and Outlook link previews
+- `TelegramBot`, `Discordbot` — Telegram and Discord link previews
+
+**Commerce and payment integrations — never match these:**
+- `facebookcatalog` — Facebook/Instagram shop catalogue feed. Blocking it breaks the shop
+- `meta-externalads` — Meta ads integration
+- `MerchantSecurityScanner` — Stripe's merchant security scanner
+
+Because of these, never add a broad substring such as `facebook` or `meta-`; match the exact bot token (`meta-externalagent`, `facebookbot`).
+
+**Empty User-Agent — deliberately not blocked.** Webhooks, payment callbacks, uptime monitors and other integrations can send requests with no User-Agent, so the rule risks blocking legitimate traffic. The volume it caught was well below our blocking bar, and any scraper can avoid it by setting a User-Agent. Removed 2026-09-19.
+
+**Generic clients we do not match:** `Dalvik` and `Java` match real Android apps and Java-based services and integrations, so they are not on the list.
 
 ### Scope: this is a Cloudflare WAF *custom rule*
 
@@ -138,9 +160,4 @@ Deliberately kept lean — added reactively from logs, not pre-emptively: scrapi
 
 ### Changelog
 
-| Date | Change |
-|------|--------|
-| 2026-07-13 | Audit vs. Cloudflare's official AI bot list. Added DeepSeekBot and PanguBot (high-impact training crawlers not on Cloudflare's named list — matters on SBFM-off sites). Removed Google-Extended and Applebot-Extended from the WAF/nginx expressions: they are robots.txt-only tokens never sent as a User-Agent, so those rules could never fire (retained in robots.txt). Corrected allow-list to Claude-User (Claude-Web deprecated). Documented the Aug-2025 PerplexityBot stealth-crawling incident. |
-| 2026-04-12 | Added Google-CloudVertexBot, GoogleOther, TikTokSpider to align with Cloudflare's AI bot blocking list |
-| 2026-04-06 | Added 17 AI training crawlers: GPTBot, Amazonbot, ClaudeBot, anthropic-ai, Applebot-Extended, Google-Extended, Meta-ExternalAgent, FacebookBot, CCBot, Diffbot, cohere-ai, AI2Bot, Image2dataset, ImagesiftBot, Timpibot, Omgili, PetalBot. Reason: training bots consume 40-50% of server traffic on some sites, causing OOM crashes. Referral bots (ChatGPT-User, Claude-Web, PerplexityBot) remain allowed. |
-| 2025-05-19 | Initial list: 31 bad bots (SEO scrapers, scanners, generic clients, regional search engines) |
+Moved to [`CHANGELOG.md`](CHANGELOG.md).

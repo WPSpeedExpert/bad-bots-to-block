@@ -33,6 +33,7 @@ User-agent: Omgilibot
 User-agent: ImagesiftBot
 User-agent: Image2dataset
 User-agent: TikTokSpider
+User-agent: Reflectionbot
 Disallow: /
 
 # SEO scrapers and bad bots
@@ -49,12 +50,12 @@ User-agent: Orbbot
 User-agent: IonCrawl
 Disallow: /
 
-# Regional search engines (block if no audience)
-User-agent: YandexBot
-User-agent: SeznamBot
-User-agent: BaiduSpider
-User-agent: Sogou
+# Low-value regional search engines
+# YandexBot, SeznamBot and Baiduspider are legitimate search engines and are
+# NOT blocked by default. Add them here only if the site has no audience in
+# Russia, the Czech Republic or China.
 User-agent: 360Spider
+User-agent: Sogou
 Disallow: /
 
 # Sitemap
